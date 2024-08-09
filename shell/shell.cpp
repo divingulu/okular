@@ -499,7 +499,7 @@ void Shell::writeSettings()
         group.writeEntry(shouldShowToolBarComingFromFullScreen, m_toolBarWasShown);
     }
 
-    // 保存tab会话到SESSION_KEY配置组
+    // 保存tab会话到SESSION_KEY配置组...
     KConfigGroup tabgroup = KSharedConfig::openConfig()->group( SESSION_KEY );
     saveProperties(tabgroup);
     KSharedConfig::openConfig()->sync();
