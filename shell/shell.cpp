@@ -63,6 +63,8 @@
 static const char *shouldShowMenuBarComingFromFullScreen = "shouldShowMenuBarComingFromFullScreen";
 static const char *shouldShowToolBarComingFromFullScreen = "shouldShowToolBarComingFromFullScreen";
 
+// 用于标识tab会话的配置组
+static const char* const SESSION_KEY = "Session";
 static const char *const SESSION_URL_KEY = "Urls";
 static const char *const SESSION_TAB_KEY = "ActiveTab";
 
@@ -268,6 +270,10 @@ Shell::Shell(const QString &serializedOptions)
         KMessageBox::error(this, i18n("Unable to find the Okular component."));
     }
 
+    //读取配置中的SESSION_KEY配置组
+    KConfigGroup tabgroup = KSharedConfig::openConfig()->group( SESSION_KEY );
+    readProperties(tabgroup);
+
     connect(guiFactory(), &KXMLGUIFactory::shortcutsSaved, this, &Shell::reloadAllXML);
 }
 
@@ -308,7 +314,8 @@ bool Shell::eventFilter(QObject *obj, QEvent *event)
         if (mEvent->button() == Qt::MiddleButton) {
             int tabIndex = m_tabWidget->tabBar()->tabAt(mEvent->pos());
             if (tabIndex != -1) {
-                closeTab(tabIndex);
+                // 不允许鼠标中键关闭tab
+                //closeTab(tabIndex);
                 return true;
             }
         }
@@ -491,6 +498,10 @@ void Shell::writeSettings()
         group.writeEntry(shouldShowMenuBarComingFromFullScreen, m_menuBarWasShown);
         group.writeEntry(shouldShowToolBarComingFromFullScreen, m_toolBarWasShown);
     }
+
+    // 保存tab会话到SESSION_KEY配置组
+    KConfigGroup tabgroup = KSharedConfig::openConfig()->group( SESSION_KEY );
+    saveProperties(tabgroup);
     KSharedConfig::openConfig()->sync();
 }
 
@@ -678,6 +689,7 @@ void Shell::setFullScreen(bool useFullScreen)
     }
 }
 
+// 设置tab，打开多个pdf时显示的标题
 void Shell::setCaption(const QString &caption)
 {
     bool modified = false;
@@ -685,14 +697,14 @@ void Shell::setCaption(const QString &caption)
     const int activeTab = m_tabWidget->currentIndex();
     if (activeTab >= 0 && activeTab < m_tabs.size()) {
         KParts::ReadWritePart *const activePart = m_tabs[activeTab].part;
-        QString tabCaption = activePart->url().fileName();
+        // left(10)，固定tab，标题大小为10个字符
+        QString tabCaption = activePart->url().fileName().left(10);
         if (activePart->isModified()) {
             modified = true;
             if (!tabCaption.isEmpty()) {
                 tabCaption.append(QStringLiteral(" *"));
             }
         }
-
         m_tabWidget->setTabText(activeTab, tabCaption);
     }
 
@@ -976,7 +988,6 @@ void Shell::setCloseEnabled(bool enabled)
         }
     }
 }
-
 void Shell::activateNextTab()
 {
     if (m_tabs.size() < 2) {
