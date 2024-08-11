@@ -331,9 +331,20 @@ QVariant AnnotationModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
     switch (role) {
-    case Qt::DisplayRole:
-        return GuiUtils::captionForAnnotation(item->annotation);
+    case Qt::DisplayRole: {
+        const QString contents = item->annotation->contents();
+
+        if (!contents.isEmpty()) {
+            return i18nc("Annotation type: contents", "%1: %2",
+                         GuiUtils::captionForAnnotation(item->annotation),
+                         contents);
+        } else {
+            QDateTime time = item->annotation->creationDate();
+            return i18nc("date", "%1", time.toString());
+            return GuiUtils::captionForAnnotation(item->annotation);
+        }
         break;
+    }
     case Qt::DecorationRole:
         return QIcon::fromTheme(QStringLiteral("okular"));
         break;
