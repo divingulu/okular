@@ -954,7 +954,7 @@ QRect PageViewAnnotator::performRouteMouseOrTabletEvent(const AnnotatorEngine::E
 	if (button == AnnotatorEngine::Right && eventType == AnnotatorEngine::Press) {
 		return QRect();
 	} else if (button == AnnotatorEngine::Right && eventType == AnnotatorEngine::Release) {
-		detachAnnotation();
+//		detachAnnotation();
 		return QRect();
 	}
 
@@ -1007,12 +1007,6 @@ QRect PageViewAnnotator::performRouteMouseOrTabletEvent(const AnnotatorEngine::E
 			if (!annotation) {
 				continue;
 			}
-
-//			Okular::Document *doc = m_pageView->document();
-//			const Okular::Page *pg = doc->page(doc->currentPage());
-//			QString selectedText;
-//			selectedText.append(pg->text(pg->textSelection(), Okular::TextPage::CentralPixelTextAreaInclusionBehaviour));
-//			annotation->setContents(selectedText);
 
 			annotation->setCreationDate(QDateTime::currentDateTime());
 			annotation->setModificationDate(QDateTime::currentDateTime());

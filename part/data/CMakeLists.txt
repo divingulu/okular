@@ -1,5 +1,5 @@
 # install annotator xml tools description
-install(FILES
+ install(FILES
    tools.xml
    toolsQuick.xml
    drawingtools.xml
