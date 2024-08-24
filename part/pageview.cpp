@@ -2434,7 +2434,9 @@ void PageView::mousePressEvent(QMouseEvent *e) {
 	bool leftButton = e->button() == Qt::LeftButton, rightButton = e->button() == Qt::RightButton;
 
 	// erase the selection when clicking with left.
-	textSelectionClear();
+	if (leftButton) {
+		textSelectionClear();
+	}
 
 	switch (d->mouseMode) {
 		case Okular::Settings::EnumMouseMode::Browse: // drag start / click / link following
