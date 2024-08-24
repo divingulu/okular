@@ -335,9 +335,7 @@ QVariant AnnotationModel::data(const QModelIndex &index, int role) const
         const QString contents = item->annotation->contents();
 
         if (!contents.isEmpty()) {
-            return i18nc("Annotation type: contents", "%1: %2",
-                         GuiUtils::captionForAnnotation(item->annotation),
-                         contents);
+					return i18nc("contents", "%1", contents);
         } else {
             QDateTime time = item->annotation->creationDate();
             return i18nc("date", "%1", time.toString());

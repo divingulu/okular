@@ -180,7 +180,7 @@ public:
 	double lastSourceLocationViewportNormalizedY;
 
 	// for everything except PgUp/PgDn and scroll to arbitrary locations
-	const int baseShortScrollDuration = 200;
+	const int baseShortScrollDuration = 0;
 	int currentShortScrollDuration;
 	// for PgUp/PgDn and scroll to arbitrary locations
 	const int baseLongScrollDuration = baseShortScrollDuration * 2;
@@ -2585,6 +2585,45 @@ void PageView::mousePressEvent(QMouseEvent *e) {
 	}
 }
 
+void PageView::showMenu(QPoint pos) {
+
+	auto eventPos = contentAreaPoint(pos);
+	PageViewItem *pageItem = pickItemOnPoint(eventPos.x(), eventPos.y());
+	if (pageItem){
+		QMenu *menu = createProcessLinkMenu(pageItem, eventPos);
+
+		const QRect &itemRect = pageItem->uncroppedGeometry();
+		const double nX = pageItem->absToPageX(eventPos.x());
+		const double nY = pageItem->absToPageY(eventPos.y());
+
+		const QList<const Okular::ObjectRect *> annotRects = pageItem->page()->objectRects(
+						Okular::ObjectRect::OAnnotation, nX, nY, itemRect.width(), itemRect.height());
+
+		AnnotationPopup annotPopup(d->document, AnnotationPopup::MultiAnnotationMode, this);
+		// Do not move annotPopup inside if, it needs to live until menu->exec()
+		if (!annotRects.isEmpty()) {
+			for (const Okular::ObjectRect *annotRect: annotRects) {
+				Okular::Annotation *ann = ((Okular::AnnotationObjectRect *) annotRect)->annotation();
+				if (ann && (ann->subType() != Okular::Annotation::AWidget)) {
+					annotPopup.addAnnotation(ann, pageItem->pageNumber());
+				}
+			}
+
+			connect(&annotPopup, &AnnotationPopup::openAnnotationWindow, this, &PageView::openAnnotationWindow);
+
+			if (!menu) {
+				menu = new QMenu(this);
+			}
+			annotPopup.addActionsToMenu(menu);
+		}
+
+		if (menu) {
+			menu->exec(QCursor::pos());
+			menu->deleteLater();
+		}
+	}
+}
+
 void PageView::mouseReleaseEvent(QMouseEvent *e) {
 	// stop the drag scrolling
 	d->dragScrollTimer.stop();
@@ -2608,6 +2647,7 @@ void PageView::mouseReleaseEvent(QMouseEvent *e) {
 		return;
 	}
 
+	qDebug()<<e->pos();
 	const QPoint eventPos = contentAreaPoint(e->pos());
 
 	// handle mode independent mid bottom zoom

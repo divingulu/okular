@@ -64,6 +64,8 @@ public:
 
     enum ClearMode { ClearAllSelection, ClearOnlyDividers };
 
+		void showMenu(QPoint eventPos);
+
     // create actions that interact with this widget
     void setupBaseActions(KActionCollection *ac);
     void setupViewerActions(KActionCollection *ac);

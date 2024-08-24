@@ -45,6 +45,8 @@
 #include "pageview.h"
 #include "settings.h"
 #include "signaturepartutils.h"
+#include "annotationpopup.h"
+#include "pageview.h"
 
 /** @short PickPointEngine */
 class PickPointEngine : public AnnotatorEngine {
@@ -689,6 +691,14 @@ public:
 		}
 	}
 
+	QString selectedText() {
+		Okular::Document *doc = m_pageView->document();
+		const Okular::Page *pg = doc->page(doc->currentPage());
+		QString selectedText;
+		selectedText.append(pg->text(selection.get(), Okular::TextPage::CentralPixelTextAreaInclusionBehaviour));
+		return selectedText;
+	}
+
 	QList<Okular::Annotation *> end() override {
 		m_creationCompleted = false;
 
@@ -722,11 +732,7 @@ public:
 			ha->setHighlightType(type);
 			ha->setBoundingRectangle(Okular::NormalizedRect(rect, item()->uncroppedWidth(), item()->uncroppedHeight()));
 
-			Okular::Document *doc = m_pageView->document();
-			const Okular::Page *pg = doc->page(doc->currentPage());
-			QString selectedText;
-			selectedText.append(pg->text(selection.get(), Okular::TextPage::CentralPixelTextAreaInclusionBehaviour));
-			ha->setContents(selectedText);
+			ha->setContents(selectedText());
 			for (const Okular::NormalizedRect &r: qAsConst(*selection)) {
 				Okular::HighlightAnnotation::Quad q;
 				q.setCapStart(false);
@@ -937,6 +943,8 @@ QCursor PageViewAnnotator::cursor() const {
 	return m_engine ? m_engine->cursor() : Qt::CrossCursor;
 }
 
+
+
 QRect PageViewAnnotator::performRouteMouseOrTabletEvent(const AnnotatorEngine::EventType eventType,
 																												const AnnotatorEngine::Button button,
 																												const AnnotatorEngine::Modifiers modifiers, const QPointF pos,
@@ -954,7 +962,8 @@ QRect PageViewAnnotator::performRouteMouseOrTabletEvent(const AnnotatorEngine::E
 	if (button == AnnotatorEngine::Right && eventType == AnnotatorEngine::Press) {
 		return QRect();
 	} else if (button == AnnotatorEngine::Right && eventType == AnnotatorEngine::Release) {
-//		detachAnnotation();
+		//		detachAnnotation();
+		m_pageView->showMenu(pos.toPoint());
 		return QRect();
 	}
 
