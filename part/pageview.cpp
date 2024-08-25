@@ -2441,6 +2441,7 @@ void PageView::mousePressEvent(QMouseEvent *e) {
 	// 测试任务 KAN-1 mm
 	// 测试任务 KAN-1 mm
 	// 测试任务 KAN-1 mm push
+	// 测试任务 KAN-2 mm
 	// 测试任务 KAN-2 mm push
 
 	switch (d->mouseMode) {
