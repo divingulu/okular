@@ -2438,6 +2438,8 @@ void PageView::mousePressEvent(QMouseEvent *e) {
 		textSelectionClear();
 	}
 
+	// 测试任务 KAN-1 mm
+
 	switch (d->mouseMode) {
 		case Okular::Settings::EnumMouseMode::Browse: // drag start / click / link following
 		{
