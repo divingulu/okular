@@ -238,7 +238,6 @@ Shell::Shell(const QString &serializedOptions)
 
         connectPart(firstPart);
 
-        readSettings();
 
         m_unique = ShellUtils::unique(serializedOptions);
         if (m_unique) {
@@ -273,6 +272,8 @@ Shell::Shell(const QString &serializedOptions)
     //读取配置中的SESSION_KEY配置组
     KConfigGroup tabgroup = KSharedConfig::openConfig()->group( SESSION_KEY );
     readProperties(tabgroup);
+    readSettings();
+    // m_sidebar->setVisible(true);
 
     connect(guiFactory(), &KXMLGUIFactory::shortcutsSaved, this, &Shell::reloadAllXML);
 }
@@ -475,6 +476,7 @@ void Shell::readSettings()
     }
 
     const KConfigGroup sidebarGroup = KSharedConfig::openConfig()->group("General");
+    // session配置读取导致sidebar配置不能正常存取，将 readSettings();移动到会话读取后能正常读取sidebar的配置
     m_sidebar->setVisible(sidebarGroup.readEntry(SIDEBAR_VISIBLE_KEY, true));
     m_sidebar->setLocked(sidebarGroup.readEntry(SIDEBAR_LOCKED_KEY, true));
 
@@ -839,7 +841,6 @@ void Shell::setActiveTab(int tab)
     m_showSidebarAction->disconnect();
     m_showSidebarAction->setChecked(m_sidebar->isVisibleTo(this));
     connect(m_showSidebarAction, &QAction::triggered, m_sidebar, &Sidebar::setVisible);
-
     m_printAction->setEnabled(m_tabs[tab].printEnabled);
     m_closeAction->setEnabled(m_tabs[tab].closeEnabled);
 }

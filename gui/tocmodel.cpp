@@ -260,6 +260,13 @@ QVariant TOCModel::data(const QModelIndex &index, int role) const
             return d->document->page(item->viewport.pageNumber)->label();
         }
         break;
+    case Qt::BackgroundRole:
+        if (item->highlight) {
+            // #00aa00
+            return QBrush(QColor(0, 120, 0));
+        } else {
+            return QVariant();
+        }
     }
     return QVariant();
 }
