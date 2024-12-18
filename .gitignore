@@ -1,38 +1,56 @@
-CMakeLists.txt.user*
-*.kdev4
-*.swp
-/build*/
-.cmake/
-
-# LSP & IDE
-/.clang-format
-/compile_commands.json
-.clangd
-.cache
-.idea
-/cmake-build*
-/generators
-/cmake-install
+# 构建目录
+build/
+CMakeFiles/
+*_autogen/
 *.cmake
-/autotests
-/tests
-/bin
-/lib
-/lib64
-/share
-/include
-/CMakeFiles
-/install
-/okularpart_autogen
-/locale
-/po
-/shell
-/okularcore_autogen
-/doc
-/core
-/icons
-/okular
-*.marks
+CMakeCache.txt
+Makefile
+CTestTestfile.cmake
+
+# 编译生成的文件
+*.o
+*.a
+*.so
+*.mo
+*.moc
+*.moc.d
+*.cpp.o
+*.cpp.o.d
+moc_*.cpp
+moc_*.cpp.d
+ui_*.h
+
+# 本地化文件
+locale/
+install/share/locale/
+po/
+
+# 其他生成的文件
+*.cache.bz2
+*.html
+*.1
+timestamp
+deps
+
+# 特定目录
+core/
+icons/
+shell/
+.cache/
+.idea/
+bin/
+build-temp/
+cmake-build*
+install/
+generators/
 
 
 
+.kdev4/
+# 特定文件
+ecm_uninstall.cmake
+Okular5Config.cmake
+Okular5ConfigVersion.cmake
+okular/core/documentviewport.h
+server exited unexpectedly
+okular.kdev4
